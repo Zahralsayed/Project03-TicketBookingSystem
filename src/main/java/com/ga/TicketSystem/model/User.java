@@ -9,9 +9,10 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
-@Table(name = "book")
+@Table(name = "users")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -27,12 +28,12 @@ public class User {
     private boolean isVerified;
     private String profilePicture;
 
+    @OneToMany(mappedBy = "user")
+    private List<Booking> bookings;
+
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDate createdAt;
     @UpdateTimestamp
     private LocalDate updatedAt;
 }
-
-
-
