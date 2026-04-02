@@ -3,11 +3,13 @@ package com.ga.TicketSystem.model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 import jakarta.persistence.Table;
+import lombok.Data;
 
 import java.util.List;
 
 @Entity
 @Table(name = "locations")
+@Data
 public class Location {
 
     @Id

@@ -3,9 +3,11 @@ package com.ga.TicketSystem.model;
 import com.ga.TicketSystem.enums.SeatStatus;
 import jakarta.persistence.Entity;
 import jakarta.persistence.*;
+import lombok.Data;
 
 @Entity
 @Table(name= "seats")
+@Data
 public class Seat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

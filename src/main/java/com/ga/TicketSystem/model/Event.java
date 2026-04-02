@@ -2,11 +2,13 @@ package com.ga.TicketSystem.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "events")
+@Data
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
