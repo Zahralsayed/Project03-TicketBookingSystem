@@ -20,12 +20,14 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String username;
     @Column(unique = true)
     private String email;
+    private String verificationToken;
     private String password_hash;
     private Role role;
     private UserStatus status;
-    private boolean isVerified;
+    private boolean isVerified = false;
     private String profilePicture;
 
     @OneToMany(mappedBy = "user")
