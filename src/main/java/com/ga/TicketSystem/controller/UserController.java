@@ -43,4 +43,10 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
     }
+
+    @PostMapping("/change-password")
+    public String change(@RequestParam Long userId, @RequestParam String oldPassword, @RequestParam String newPassword) {
+        userService.changePassword(userId, oldPassword, newPassword);
+        return "Password updated successfully!";
+    }
 }

@@ -70,4 +70,20 @@ public class UserService {
         return user;
     }
 
+    public void changePassword(Long userId, String oldPassword ,String newPassword) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+
+       if (user.getStatus().equals(UserStatus.ACTIVE)) {
+
+           if (!user.getPassword_hash().equals(oldPassword)) {
+               throw new RuntimeException("The old password is incorrect");
+           }
+
+           user.setPassword_hash(newPassword);
+           userRepository.save(user);
+
+       } else { throw new RuntimeException("You Can't Change Password For " + user.getStatus()+ " Account.");}
+
+    }
+
 }
