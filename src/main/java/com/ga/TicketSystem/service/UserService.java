@@ -51,4 +51,23 @@ public class UserService {
                     return true;
                 }).orElse(false);
     }
+
+    public User login(String email, String password) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!user.getPassword_hash().equals(password)) {
+            throw new RuntimeException("Invalid Credentials");
+        }
+
+        if (!user.isVerified()){
+            throw new RuntimeException("Account not verified, Please check your email.");
+        }
+
+        if (user.getStatus() != UserStatus.ACTIVE) {
+            throw new RuntimeException("Your Account is "+ user.getStatus() +", Please contact support.");
+        }
+
+        return user;
+    }
+
 }
