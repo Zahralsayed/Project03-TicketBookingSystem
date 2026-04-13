@@ -51,4 +51,60 @@ public class UserService {
                     return true;
                 }).orElse(false);
     }
+
+    public User login(String email, String password) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!user.getPassword_hash().equals(password)) {
+            throw new RuntimeException("Invalid Credentials");
+        }
+
+        if (!user.isVerified()){
+            throw new RuntimeException("Account not verified, Please check your email.");
+        }
+
+        if (user.getStatus() != UserStatus.ACTIVE) {
+            throw new RuntimeException("Your Account is "+ user.getStatus() +", Please contact support.");
+        }
+
+        return user;
+    }
+
+    public void changePassword(Long userId, String oldPassword ,String newPassword) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+
+       if (user.getStatus().equals(UserStatus.ACTIVE)) {
+
+           if (!user.getPassword_hash().equals(oldPassword)) {
+               throw new RuntimeException("The old password is incorrect");
+           }
+
+           user.setPassword_hash(newPassword);
+           userRepository.save(user);
+
+       } else { throw new RuntimeException("You Can't Change Password For " + user.getStatus()+ " Account.");}
+
+    }
+
+    public void forgotPassword(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        String token = UUID.randomUUID().toString();
+        user.setResetToken(token);
+        userRepository.save(user);
+
+        emailService.sendResetLink(user.getEmail(), token);
+    }
+
+    @Transactional
+    public void resetPassword(String token, String newPassword) {
+        User user = userRepository.findByResetToken(token)
+                .orElseThrow(() -> new RuntimeException("Invalid or expired reset link."));
+
+        user.setPassword_hash(newPassword);
+        user.setResetToken(null);
+        userRepository.save(user);
+    }
+
 }

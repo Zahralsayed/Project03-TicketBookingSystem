@@ -30,6 +30,8 @@ public class User {
     private boolean isVerified = false;
     private String profilePicture;
 
+    private String resetToken;
+
     @OneToMany(mappedBy = "user")
     private List<Booking> bookings;
 

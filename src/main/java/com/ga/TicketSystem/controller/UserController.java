@@ -1,8 +1,10 @@
 package com.ga.TicketSystem.controller;
 
+import com.ga.TicketSystem.dto.LoginRequest;
 import com.ga.TicketSystem.model.User;
 import com.ga.TicketSystem.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +30,40 @@ public class UserController {
             return "Account Verified Successfully";
         } else {
             return "Invalid or Expired Token";
+        }
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+        System.out.println("Calling login ==> ");
+        try {
+            User user = userService.login(loginRequest.getEmail(), loginRequest.getPassword());
+            return ResponseEntity.ok(user);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/change-password")
+    public String change(@RequestParam Long userId, @RequestParam String oldPassword, @RequestParam String newPassword) {
+        userService.changePassword(userId, oldPassword, newPassword);
+        return "Password updated successfully!";
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<String> forgotPassword(@RequestParam String email) {
+        userService.forgotPassword(email);
+        return ResponseEntity.ok("Reset link has been sent.");
+    }
+
+    @GetMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestParam String token,
+                                                @RequestParam String newPassword) {
+        try {
+            userService.resetPassword(token, newPassword);
+            return ResponseEntity.ok("Password has been reset successfully. You can now login.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 }
