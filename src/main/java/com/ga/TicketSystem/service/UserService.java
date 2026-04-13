@@ -86,4 +86,25 @@ public class UserService {
 
     }
 
+    public void forgotPassword(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        String token = UUID.randomUUID().toString();
+        user.setResetToken(token);
+        userRepository.save(user);
+
+        emailService.sendResetLink(user.getEmail(), token);
+    }
+
+    @Transactional
+    public void resetPassword(String token, String newPassword) {
+        User user = userRepository.findByResetToken(token)
+                .orElseThrow(() -> new RuntimeException("Invalid or expired reset link."));
+
+        user.setPassword_hash(newPassword);
+        user.setResetToken(null);
+        userRepository.save(user);
+    }
+
 }
