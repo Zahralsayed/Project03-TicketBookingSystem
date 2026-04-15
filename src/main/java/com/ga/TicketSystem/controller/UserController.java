@@ -1,6 +1,6 @@
 package com.ga.TicketSystem.controller;
 
-import com.ga.TicketSystem.dto.LoginRequest;
+import com.ga.TicketSystem.model.request.LoginRequest;
 import com.ga.TicketSystem.model.User;
 import com.ga.TicketSystem.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,8 +8,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Map;
+
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/auth/users")
 public class UserController {
     @Autowired
     private UserService userService;
@@ -17,12 +20,16 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody User user) {
         System.out.println("Calling registerUser ==> ");
-        userService.register(user);
-        return ResponseEntity.ok("Registration successful! Please check your email to verify.");
-
+        try {
+            userService.register(user);
+            return ResponseEntity.ok("Registration successful! Please check your email to verify.");
+        }
+        catch (Exception e) {
+         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error",e.getMessage()));
+        }
     }
 
-    @GetMapping("/auth/verify")
+    @GetMapping("/verify")
     public String verifyAccount(@RequestParam("token") String token) {
         boolean isVerified  = userService.verifyUser(token);
 
@@ -36,12 +43,12 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         System.out.println("Calling login ==> ");
-        try {
-            User user = userService.login(loginRequest.getEmail(), loginRequest.getPassword());
-            return ResponseEntity.ok(user);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
-        }
+//        try {
+           return userService.login(loginRequest);
+//            return ResponseEntity.ok(user);
+//        } catch (RuntimeException e) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+
     }
 
     @PostMapping("/change-password")
@@ -65,5 +72,10 @@ public class UserController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
+    }
+
+    @GetMapping("/all")
+    public List<User> getAllUsers() {
+        return userService.findAllUsers();
     }
 }
