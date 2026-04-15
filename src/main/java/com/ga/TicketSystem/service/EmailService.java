@@ -20,7 +20,7 @@ public class EmailService {
             MimeMessageHelper helper =
                     new MimeMessageHelper(message, true);
 
-            String url = "http://localhost:8080/api/users/auth/verify?token=" + token;
+            String url = "http://localhost:8080/auth/users/verify?token=" + token;
 
             helper.setTo(to);
             helper.setSubject("Complete Your Registration");
@@ -39,7 +39,7 @@ public class EmailService {
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
             // This points to your NEW reset endpoint
-            String url = "http://localhost:8080/api/users/reset-password?token=" + token;
+            String url = "http://localhost:8080/auth/users/reset-password?token=" + token;
 
             helper.setTo(to);
             helper.setSubject(" Ticket System - Password Reset Request");
