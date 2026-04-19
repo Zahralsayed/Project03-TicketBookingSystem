@@ -6,6 +6,7 @@ import com.ga.TicketSystem.repository.EventRepository;
 import com.ga.TicketSystem.repository.LocationRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,17 +15,16 @@ public class EventService {
     private EventRepository eventRepository;
     private LocationRepository locationRepository;
 
+    public EventService(EventRepository eventRepository, LocationRepository locationRepository) {
+        this.eventRepository = eventRepository;
+        this.locationRepository = locationRepository;
+    }
+
     public Event creatEvent(Event event){
-        Location location = locationRepository.findById(event.getLocation().getId())
-                .orElseThrow(() -> new RuntimeException("Location not found"));
-
-        Event e = new Event();
-        e.setEventName(event.getEventName());
-        e.setDescription(event.getDescription());
-        e.setStartTime(event.getStartTime());
-        e.setLocation(location);
-
-        return eventRepository.save(e);
+        if (!locationRepository.existsById(event.getLocation().getId())) {
+            throw new RuntimeException("Location ID " + event.getLocation().getId() + " not found.");
+        }
+        return eventRepository.save(event);
     }
 
     public List<Event> findAll(){
@@ -35,7 +35,24 @@ public class EventService {
         return eventRepository.findById(id);
     }
 
-    public List<Event> findByLocationId(Long locationId){
-        return eventRepository.findByLocationId(locationId);
+    public List<Event> findByLocationId(Long id){
+        return eventRepository.findByLocationId(id);
     }
+
+    public List<Event> findByLocationName(String LocationName){
+        return eventRepository.findByLocationName(LocationName);
+    }
+
+    public Optional<Event> findByLocationIdAndEventId(Long id, Long eventId){
+        return eventRepository.findByLocationIdAndId(id,eventId);
+    }
+
+    public String delete(Long id){
+        eventRepository.deleteById(id);
+        return "Admin deleted Event.";
+    }
+
+//    public List<Event> findByLocationNameAndBetween(String LocationName, Date start, Date end){
+//        return eventRepository.findByLocationNameAndBetween(LocationName, start, end);
+//    }
 }
