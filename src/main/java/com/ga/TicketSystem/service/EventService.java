@@ -4,6 +4,7 @@ import com.ga.TicketSystem.model.Event;
 import com.ga.TicketSystem.model.Location;
 import com.ga.TicketSystem.repository.EventRepository;
 import com.ga.TicketSystem.repository.LocationRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -20,9 +21,17 @@ public class EventService {
         this.locationRepository = locationRepository;
     }
 
+    @Transactional
     public Event creatEvent(Event event){
         if (!locationRepository.existsById(event.getLocation().getId())) {
             throw new RuntimeException("Location ID " + event.getLocation().getId() + " not found.");
+        }
+
+        List<Event> existingEvents = eventRepository.findByLocationId(event.getLocation().getId());
+        for (Event existingEvent : existingEvents) {
+            if (event.getStartTime().isBefore(existingEvent.getEndTime()) && event.getEndTime().isAfter(existingEvent.getStartTime())) {
+                throw new RuntimeException("Schedule Conflict: The location is already booked for " +existingEvent.getEventName() + " during this Time. ");
+            }
         }
         return eventRepository.save(event);
     }
