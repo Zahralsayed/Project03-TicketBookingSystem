@@ -26,6 +26,9 @@ public class Booking {
     private Double totalAmount;
     private BookingStatus bookingStatus;
 
+    @Version
+    private Integer version;
+
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdAt;
