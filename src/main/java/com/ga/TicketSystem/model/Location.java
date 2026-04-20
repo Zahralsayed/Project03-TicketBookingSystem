@@ -1,5 +1,6 @@
 package com.ga.TicketSystem.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 import jakarta.persistence.Table;
@@ -23,6 +24,7 @@ public class Location {
     @OneToMany(mappedBy = "location")
     private List<Event> events;
 
-    @OneToMany(mappedBy = "location")
+    @OneToMany(mappedBy = "location", orphanRemoval = true)
+    @JsonManagedReference
     private List<Seat> seats;
 }

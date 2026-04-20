@@ -39,7 +39,14 @@ public class SecurityConfiguration {
                                 "/auth/users/change-password",
                                 "/auth/users/forgot-password",
                                 "/auth/users/reset-password",
-                                "/auth/users/all"
+                                "/auth/users/all",
+                                "/api/locations/all",
+                                "/api/locations/{name}",
+                                "/api/locations/id/{id}",
+                                "/api/events",
+                                "/api/location/{id}/events",
+                                "/api/location/{locationId}/event/{eventId}",
+                                "/api/bookings/create"
                         ).permitAll()
 //                        .requestMatchers("/api/user-profiles/all-profiles").hasRole("ADMIN")
 //                        .requestMatchers("/auth/users/getAllUsers").hasRole("ADMIN")

@@ -1,5 +1,6 @@
 package com.ga.TicketSystem.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ga.TicketSystem.enums.Role;
 import com.ga.TicketSystem.enums.UserStatus;
 import jakarta.annotation.Generated;
@@ -24,6 +25,7 @@ public class User {
     @Column(unique = true)
     private String email;
     private String verificationToken;
+    @JsonIgnore
     private String password_hash;
     private Role role;
     private UserStatus status;
