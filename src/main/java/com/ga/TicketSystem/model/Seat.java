@@ -20,9 +20,6 @@ public class Seat {
     private SeatStatus status;
     private SeatCategory category;
 
-    @Version
-    private Integer version; // Automatic Optimistic Locking
-
     @ManyToOne
     @JoinColumn(name = "location_id")
     @JsonBackReference
