@@ -1,5 +1,6 @@
 package com.ga.TicketSystem.service;
 
+import com.ga.TicketSystem.enums.Role;
 import com.ga.TicketSystem.model.request.LoginRequest;
 import com.ga.TicketSystem.enums.UserStatus;
 import com.ga.TicketSystem.model.User;
@@ -107,13 +108,8 @@ public ResponseEntity<?> login(LoginRequest loginRequest) {
         if (myUser.getUser().getStatus() != UserStatus.ACTIVE) {
             User user = myUser.getUser();
             String token = UUID.randomUUID().toString();
-//
-//            user.setVerificationToken(token);
-//            user.setVerificationTokenDate(LocalDateTime.now());
+
             userRepository.save(user);
-
-//            sendVerificationEmail(myUser.getUser(), token);
-
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body(Map.of(
                             "error", "Your account is inactive. Please verify your email.",
@@ -121,10 +117,8 @@ public ResponseEntity<?> login(LoginRequest loginRequest) {
                     ));
         }
 
-        // Generate JWT
         String jwt = jwtUtils.generateToken(userDetails);
 
-        // Return login success
         return ResponseEntity.ok(
                 Map.of(
                         "email", userDetails.getUsername(),
@@ -182,4 +176,23 @@ public ResponseEntity<?> login(LoginRequest loginRequest) {
         return userRepository.findAll();
     }
 
+    @Transactional
+    public String deleteUser(Long userId) {
+
+        if (!userRepository.existsById(userId)) {
+            return "The user was already deleted or does not exist.";
+        }
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User " + userId + " not found."));
+
+        if (user.getRole() == Role.ADMIN) {
+            user.setStatus(UserStatus.INACTIVE);
+            userRepository.save(user);
+            return "Admin account deactivated.";
+        } else {
+            userRepository.delete(user);
+            return "User permanently removed.";
+        }
+    }
 }
