@@ -42,6 +42,27 @@ public class BookingController {
     }
 
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @PatchMapping("/{id}/confirm")
+    public ResponseEntity<BookingResponseDTO> confirmBooking(@PathVariable Long id) {
+        BookingResponseDTO confirmed = bookingService.confirmBooking(id);
+        return ResponseEntity.ok(confirmed);
+    }
+
+    @PatchMapping("/{id}/cancel")
+    public ResponseEntity<?> cancelBooking(@PathVariable Long id, Principal principal) {
+        bookingService.cancelBooking(id, principal.getName());
+        return ResponseEntity.ok(Map.of("message", "Your booking has been canceled."));
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> deleteBooking(@PathVariable Long id) {
+        bookingService.deleteBooking(id);
+        return ResponseEntity.ok(Map.of("message", "Admin: Booking deleted permanently."));
+    }
+
+
 
 
 //    @GetMapping("/all")
