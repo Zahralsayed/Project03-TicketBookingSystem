@@ -1,6 +1,7 @@
 package com.ga.TicketSystem.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ga.TicketSystem.enums.Role;
 import com.ga.TicketSystem.enums.UserStatus;
@@ -31,9 +32,12 @@ public class User {
     private Role role;
     private UserStatus status;
     private boolean isVerified = false;
-    private String profilePicture;
-
+//    private String profilePicture;
     private String resetToken;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private UserProfile profile;
 
     @JsonIgnore
     @OneToMany(mappedBy = "user")

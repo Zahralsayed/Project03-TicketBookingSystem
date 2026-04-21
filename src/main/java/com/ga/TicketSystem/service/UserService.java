@@ -1,6 +1,7 @@
 package com.ga.TicketSystem.service;
 
 import com.ga.TicketSystem.enums.Role;
+import com.ga.TicketSystem.model.UserProfile;
 import com.ga.TicketSystem.model.request.LoginRequest;
 import com.ga.TicketSystem.enums.UserStatus;
 import com.ga.TicketSystem.model.User;
@@ -68,6 +69,10 @@ public class UserService {
         user.setVerificationToken(token);
         user.setVerified(false);
         user.setStatus(UserStatus.PENDING);
+
+        UserProfile profile = new UserProfile();
+        profile.setUser(user);
+        user.setProfile(profile);
 
         User savedUser = userRepository.save(user);
 
